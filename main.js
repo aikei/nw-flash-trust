@@ -5,37 +5,50 @@ var os = require('os');
 var path = require('path');
 var mkdirp = require('mkdirp');
 
-function getFlashPlayerFolder() {
-    switch (process.platform) {
-    case 'win32':
-        var version = os.release().split('.');
-        if (version[0] === '5') {
-            // xp
-            return process.env.USERPROFILE + '\\Application Data\\Macromedia\\Flash Player';
-        } else {
-            // vista, 7, 8
-            return process.env.USERPROFILE + '\\AppData\\Roaming\\Macromedia\\Flash Player';
-        }
-    case 'darwin':
-        // osx
-        return process.env.HOME + '/Library/Preferences/Macromedia/Flash Player';
-    case 'linux':
-        return process.env.HOME + '/.macromedia/Flash_Player';
-    }
-    return null;
+function getFlashPlayerFolder(options) {
+	switch (process.platform) {
+		case 'win32':
+			var version = os.release().split('.');
+			if (version[0] === '5') {
+				// xp
+				return process.env.USERPROFILE + '\\Application Data\\Macromedia\\Flash Player';
+			} else {
+				// vista, 7, 8
+				//AppData\Local\[Test App]\User Data\Default\Pepper Data\Shockwave Flash\WritableRoot
+				return process.env.USERPROFILE + '\\AppData\\Local\\'+ options.appName +'\\User Data\\Default\\Pepper Data\\Shockwave Flash\\WritableRoot';
+				//return process.env.USERPROFILE + '\\AppData\\Local\\'+ meta.name +'\\User Data\\Default\\Pepper Data\\Shockwave Flash\\System';
+			}
+		case 'darwin':
+			// osx
+			return process.env.HOME + '/Library/Preferences/Macromedia/Flash Player';
+		case 'linux':
+			return process.env.HOME + '/.macromedia/Flash_Player';
+	}
+	return null;
 }
 
-function getFlashPlayerConfigFolder(customFolder) {
-    if (customFolder) {
-        return path.join(customFolder, '#Security', 'FlashPlayerTrust');
+function getFlashPlayerConfigFolder(options) {
+    if (options.customFolder) {
+        return path.join(options.customFolder, '#Security', 'FlashPlayerTrust');
     }
-    return path.join(getFlashPlayerFolder(), '#Security', 'FlashPlayerTrust');
+    return path.join(getFlashPlayerFolder(options), '#Security', 'FlashPlayerTrust');
 }
 
-module.exports.initSync = function (appName, customFolder) {
+/**
+ * 
+ * @param {String} appName - appName from package.json
+ * @param {Object/String} options - options object or just custom folder (string)
+ */
+module.exports.initSync = function (appName, options) {
     
     var trusted = [];
     var cfgPath, cfgFolder;
+
+    if (typeof options === "string") {
+        options = { customFolder: options };
+    }
+    options = options || {};
+    options.appName = appName;
     
     function save() {
         var data = trusted.join(os.EOL);
@@ -43,7 +56,11 @@ module.exports.initSync = function (appName, customFolder) {
     }
     
     function add(path) {
-        if (!isTrusted(path)) {
+        path = path || "";
+        if (options.nwChromeExtensionsProtocol) {
+            path = "chrome-extension://looopdimgeckeofmcaiaibhmghiooned"+path;
+        }
+        if (!isTrusted(path)) { 
             trusted.push(path);
         }
         save();
@@ -76,9 +93,8 @@ module.exports.initSync = function (appName, customFolder) {
     if (typeof appName !== 'string' || appName === '' || !appName.match(/^[a-zA-Z0-9-_\.]*$/)) {
         throw new Error('Provide valid appName.');
     }
-    
-    cfgFolder = getFlashPlayerConfigFolder(customFolder);
-
+    this.appName = appName;
+    cfgFolder = getFlashPlayerConfigFolder(options);
     // Find out if Flash Config Folder exists
     if (!fs.existsSync(cfgFolder)) {
         // if this folder is not present then try to create it

@@ -27,16 +27,23 @@ var flashTrust = require('nw-flash-trust');
 // appName could be any globally unique string containing only
 // big and small letters, numbers and chars "-._"
 // It specifies name of file where trusted paths will be stored.
-// Best practice is to feed it with "name" value from your package.json file.
+// This must be same as "name" value from your package.json file.
 var appName = 'myApp';
 
 // Initialization and parsing config file for given appName (if already exists).
-var trustManager = flashTrust.initSync(appName);
+// If you are using latest NW.js, it is currently using chrome-extension:// protocol
+// To address local files. So you will probably want to set nwChromeExtensionsProtocol
+// to true within options object (This might need to be left as false or undefined for Electron)
+var trustManager = flashTrust.initSync(appName, {
+    nwChromeExtensionsProtocol: true
+});
 
 // Alternatively you can provide a custom flash config folder for initialization.
 // This is useful for example if you use Atom Electron and a PPAPI flash plugin (like Pepper Flash),
 // as the flash config folder in this case would be in the Atom Electron data path folder.
-var trustManager = flashTrust.initSync(appName, '/yourApp-data-path/Pepper Data/Shockwave Flash/WritableRoot');
+var trustManager = flashTrust.initSync(appName, { 
+    customFolder: '/yourApp-data-path/Pepper Data/Shockwave Flash/WritableRoot' 
+});
 
 // adds given filepath to trusted locations
 // paths must be absolute
