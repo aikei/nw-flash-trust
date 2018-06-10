@@ -45,6 +45,20 @@ var trustManager = flashTrust.initSync(appName, {
     customFolder: '/yourApp-data-path/Pepper Data/Shockwave Flash/WritableRoot' 
 });
 
+
+// if nwChromeExtensionsProtocol set to true in initSync's options
+// object, this adds whole current folder to trusted locations
+trustManager.add("");
+
+// if nwChromeExtensionsProtocol set to true in initSync's options
+// object, this adds local file test.swf in root folder of your project
+// to trsuted locations
+trustManager.add("test.swf");
+
+// following examples are for file:// protocol i.e. for
+// a scenario where nwChromeExtensionsProtocol is not set
+// or set to false in initSync's options object
+
 // adds given filepath to trusted locations
 // paths must be absolute
 trustManager.add(path.resolve('path-to', 'file.swf'));
