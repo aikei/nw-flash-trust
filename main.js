@@ -58,7 +58,7 @@ module.exports.initSync = function (appName, options) {
     function add(path) {
         path = path || "";
         if (options.nwChromeExtensionsProtocol) {
-            path = "chrome-extension://looopdimgeckeofmcaiaibhmghiooned"+path;
+            path = `chrome-extension://${chrome.runtime.id}/${path}`;
         }
         if (!isTrusted(path)) { 
             trusted.push(path);
