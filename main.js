@@ -20,7 +20,7 @@ function getFlashPlayerFolder(options) {
 			}
 		case 'darwin':
             // osx
-            return process.env.HOME + `/Library/Application Support/${options.appName}/Default/Pepper Data/Shockwave Flash/Shockwave Flash/WritableRoot`;
+            return process.env.HOME + `/Library/Application Support/${options.appName}/Default/Pepper Data/Shockwave Flash/WritableRoot`;
 			//return process.env.HOME + '/Library/Preferences/Macromedia/Flash Player';
 		case 'linux':
 			return process.env.HOME + '/.macromedia/Flash_Player';
