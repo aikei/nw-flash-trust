@@ -19,8 +19,9 @@ function getFlashPlayerFolder(options) {
 				//return process.env.USERPROFILE + '\\AppData\\Local\\'+ meta.name +'\\User Data\\Default\\Pepper Data\\Shockwave Flash\\System';
 			}
 		case 'darwin':
-			// osx
-			return process.env.HOME + '/Library/Preferences/Macromedia/Flash Player';
+            // osx
+            return process.env.HOME + `/Library/Application Support/${options.appName}/Default/Pepper Data/Shockwave Flash/Shockwave Flash/WritableRoot`;
+			//return process.env.HOME + '/Library/Preferences/Macromedia/Flash Player';
 		case 'linux':
 			return process.env.HOME + '/.macromedia/Flash_Player';
 	}
@@ -36,8 +37,8 @@ function getFlashPlayerConfigFolder(options) {
 
 /**
  * 
- * @param {String} appName - appName from package.json
- * @param {Object/String} options - options object or just custom folder (string)
+ * @param {string} appName - appName from package.json
+ * @param {object|string} options - options object or just custom folder (string)
  */
 module.exports.initSync = function (appName, options) {
     
