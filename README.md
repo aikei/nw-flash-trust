@@ -13,7 +13,7 @@ Long story short: you have to put text file in special directory provided by Fla
 ## Installation
 
 ```
-npm install nw-flash-trust
+npm install nw-flash-trust-a
 ```
 
 ## Usage & API
@@ -22,7 +22,7 @@ For simplicity API is fully synchronous. It does a little of I/O, but so little 
 
 ```javascript
 var path = require('path');
-var flashTrust = require('nw-flash-trust');
+var flashTrust = require('nw-flash-trust-a');
 
 // appName could be any globally unique string containing only
 // big and small letters, numbers and chars "-._"
